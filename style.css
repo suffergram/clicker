@@ -8,6 +8,7 @@ body {
 	--text-color: #bbb;
 	--button-text-size: 1em;
 	--button-height: 60px;
+	--score-text-position: 40px;
 }
 
 @keyframes pop {
@@ -42,7 +43,7 @@ body {
 
 .score {
 	position: fixed;
-	bottom: 40px;
+	bottom: var(--score-text-position);
 	font-size: 30px;
 	cursor: default;
 }
@@ -106,4 +107,9 @@ body {
 	border: none;
 }
 
+.speed {
+	position: fixed;
+	right: var(--score-text-position);
+	bottom: var(--score-text-position);
+}
 
