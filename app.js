@@ -15,7 +15,7 @@ menu.children[0].textContent = 'UPGRADES'
 // create upgrade 1
 let upgrade1 = document.createElement('button')
 upgrade1.setAttribute('id', 'up1')
-upgrade1.textContent = 'AUTO CLICKER (' + CLICKER_VALUE + ')'
+upgrade1.textContent = 'CLICKER (' + CLICKER_VALUE + ')'
 upgrade1.setAttribute('count', '0')
 upgrade1.setAttribute('value', '0')
 let upgradeCounter1 = document.createElement('div')
