@@ -107,7 +107,6 @@ function startInterval(interval) {
 	autoClickInterval = setInterval(() => {
 		score += scoreIndex
 		newScore()
-		newSpeed()
 	}, interval)
 }
 
@@ -186,6 +185,7 @@ document.addEventListener('click', function(event) {
 			newSpeed()
 
 			console.log('+gravity, total: ' + upgrade3.getAttribute('count'))
+			console.log('speed: ' + speed)
 		}
 	}
 })
