@@ -1,8 +1,11 @@
-const CLICKER_VALUE = 100
-const MAGNET_VALUE = 1000
-const GRAVITY_VALUE = 10000
-let scoreIndex = 1;
-
+const CLICKER_VALUE = 10
+const MAGNET_VALUE = 100
+const GRAVITY_VALUE = 1000
+let magnetNetWorth = 1
+let gravityNetWorth = 10
+let scoreIndex = 1
+let speed = 0
+let newInterval = 0
 
 // create upgrade menu
 let menu = document.createElement('div')
@@ -63,12 +66,22 @@ scoreText.classList = 'score'
 scoreText.textContent = ''
 container.append(scoreText)
 
+// create speed metric
+let speedText = document.createElement('div')
+speedText.classList = 'speed'
+speedText.textContent = ''
+container.append(speedText)
+
 let score = +scoreText.textContent;
 
 
 // functions
 function newScore() {
 	scoreText.textContent = score
+}
+
+function newSpeed() {
+	speedText.innerHTML = 'current speed: <strong>' + speed.toFixed(3) + '</strong> or ' + scoreIndex + ' points per ' + (newInterval / 1000).toFixed(2) + ' seconds'
 }
 
 function addScorePopOut() {
@@ -79,13 +92,22 @@ function addScorePopOut() {
 	setInterval(() => popOut.remove(), 1000)
 }
 
+// let worker
+// function startWorker() {
+// 	worker = new Worker('worker.js')
+// }
+
+// function stopWorker() {
+// 	worker.terminate()
+// }
+
 // auto-clicker
 let autoClickInterval;
 function startInterval(interval) {
 	autoClickInterval = setInterval(() => {
-		// score += +upgrade1.getAttribute('count')
 		score += scoreIndex
 		newScore()
+		newSpeed()
 	}, interval)
 }
 
@@ -103,7 +125,6 @@ document.addEventListener('click', function(event) {
 	// if clicked on upgrade 1
 	else if (event.target.id == 'up1') {
 		if (score >= CLICKER_VALUE) {
-			console.log('cursor added')
 			score -= CLICKER_VALUE
 			newScore()
 
@@ -114,16 +135,20 @@ document.addEventListener('click', function(event) {
 			upgradeCounter1.textContent = +upgradeCounter1.textContent + 1
 
 			// create new interval
-			let newInterval = 8000 / count
+			newInterval = 8000 / count
+			speed = 1000 * scoreIndex / newInterval
+			newSpeed()
 			clearInterval(autoClickInterval)
 			startInterval(newInterval)
+
+			console.log('+cursor, total: ' + upgrade1.getAttribute('count'))
+			console.log('speed: ' + speed)
 		}
 	}
 
 	// if clicked on upgrade 2
 	else if (event.target.id == 'up2') {
 		if (score >= MAGNET_VALUE) {
-			console.log('magnet added')
 			score -= MAGNET_VALUE
 			newScore()
 
@@ -134,14 +159,18 @@ document.addEventListener('click', function(event) {
 			upgradeCounter2.textContent = +upgradeCounter2.textContent + 1
 
 			// change scoreIndex
-			scoreIndex += 1
+			scoreIndex += magnetNetWorth
+			speed = 1000 * scoreIndex / newInterval
+			newSpeed()
+
+			console.log('+magnet, total: ' + upgrade2.getAttribute('count'))
+			console.log('speed: ' + speed)
 		}
 	}
 
 	// if clicked on upgrade 3
 	else if (event.target.id == 'up3') {
 		if (score >= GRAVITY_VALUE) {
-			console.log('gravity added')
 			score -= GRAVITY_VALUE
 			newScore()
 
@@ -152,7 +181,11 @@ document.addEventListener('click', function(event) {
 			upgradeCounter3.textContent = +upgradeCounter3.textContent + 1
 
 			// change scoreIndex
-			scoreIndex += 10
+			scoreIndex += gravityNetWorth
+			speed = 1000 * scoreIndex / newInterval
+			newSpeed()
+
+			console.log('+gravity, total: ' + upgrade3.getAttribute('count'))
 		}
 	}
 })
