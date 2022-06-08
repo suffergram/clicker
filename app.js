@@ -123,7 +123,7 @@ document.addEventListener('click', function(event) {
 	// if clicked on upgrade 2
 	else if (event.target.id == 'up2') {
 		if (score >= MAGNET_VALUE) {
-			console.log('manget added')
+			console.log('magnet added')
 			score -= MAGNET_VALUE
 			newScore()
 
@@ -141,7 +141,7 @@ document.addEventListener('click', function(event) {
 	// if clicked on upgrade 3
 	else if (event.target.id == 'up3') {
 		if (score >= GRAVITY_VALUE) {
-			console.log('manget added')
+			console.log('gravity added')
 			score -= GRAVITY_VALUE
 			newScore()
 
