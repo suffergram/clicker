@@ -67,7 +67,7 @@ function newSpeed() {
 function addScorePopOut() {
 	let popOut = document.createElement('div')
 	popOut.classList = 'popout'
-	popOut.textContent = '+' + scoreIndex + cheat
+	popOut.textContent = '+' + (scoreIndex + cheat)
 	container.append(popOut)
 	setInterval(() => popOut.remove(), 1000)
 }
