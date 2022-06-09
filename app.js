@@ -1,11 +1,16 @@
-const CLICKER_VALUE = 100
-const MAGNET_VALUE = 1000
-const GRAVITY_VALUE = 10000
-let magnetNetWorth = 1
-let gravityNetWorth = 10
+let upgrades = [
+	[100, 'CLICKER'],
+	[1000, 'ROCK', 1],
+	[10000, 'MOUNTAIN', 10],
+	[1000000, 'PLANET', 1000],
+]
+
+const ratio = 1.095
 let scoreIndex = 1
 let speed = 0
 let newInterval = 0
+let cheat = 0
+
 
 // create upgrade menu
 let menu = document.createElement('div')
@@ -14,46 +19,21 @@ container.append(menu)
 menu.append(document.createElement('div'))
 menu.children[0].textContent = 'UPGRADES'
 
+// create upgrades
+for (let x = 0; x < upgrades.length; x++) {
+	let upgrade = document.createElement('button')
+	upgrade.setAttribute('id', x)
+	upgrade.classList = 'upgrade'
+	upgrade.textContent = upgrades[x][1] + ' (' + upgrades[x][0] + ')'
+	let upgradeCounter = document.createElement('div')
+	upgradeCounter.classList = 'upgradecounter'
+	upgradeCounter.textContent = 0
+	menu.append(document.createElement('div'))
+	menu.children[x + 1].append(upgrade, upgradeCounter)
+}
 
-// create upgrade 1
-let upgrade1 = document.createElement('button')
-upgrade1.setAttribute('id', 'up1')
-upgrade1.textContent = 'CLICKER (' + CLICKER_VALUE + ')'
-upgrade1.setAttribute('count', '0')
-upgrade1.setAttribute('value', '0')
-let upgradeCounter1 = document.createElement('div')
-upgradeCounter1.setAttribute('id', 'upcnt1')
-upgradeCounter1.classList = 'upgradecounter'
-upgradeCounter1.textContent = upgrade1.getAttribute('count')
-menu.append(document.createElement('div'))
-menu.children[1].append(upgrade1, upgradeCounter1)
-
-// create upgrade 2
-let upgrade2 = document.createElement('button')
-upgrade2.setAttribute('id', 'up2')
-upgrade2.textContent = 'MAGNET (' + MAGNET_VALUE / 1000 + 'K)'
-upgrade2.setAttribute('count', '0')
-upgrade2.setAttribute('value', '0')
-let upgradeCounter2 = document.createElement('div')
-upgradeCounter2.setAttribute('id', 'upcnt2')
-upgradeCounter2.classList = 'upgradecounter'
-upgradeCounter2.textContent = upgrade2.getAttribute('count')
-menu.append(document.createElement('div'))
-menu.children[2].append(upgrade2, upgradeCounter2)
-
-// create upgrade 3
-let upgrade3 = document.createElement('button')
-upgrade3.setAttribute('id', 'up3')
-upgrade3.textContent = 'GRAVITY (' + GRAVITY_VALUE / 1000 + 'K)'
-upgrade3.setAttribute('count', '0')
-upgrade3.setAttribute('value', '0')
-let upgradeCounter3 = document.createElement('div')
-upgradeCounter3.setAttribute('id', 'upcnt3')
-upgradeCounter3.classList = 'upgradecounter'
-upgradeCounter3.textContent = upgrade3.getAttribute('count')
-menu.append(document.createElement('div'))
-menu.children[3].append(upgrade3, upgradeCounter3)
-
+let upgradesList = document.querySelectorAll('.upgrade')
+let upgradeCountersList = document.querySelectorAll('.upgradecounter')
 
 // create player with .player class
 let player = document.createElement('div')
@@ -87,19 +67,31 @@ function newSpeed() {
 function addScorePopOut() {
 	let popOut = document.createElement('div')
 	popOut.classList = 'popout'
-	popOut.textContent = '+' + scoreIndex
+	popOut.textContent = '+' + scoreIndex + cheat
 	container.append(popOut)
 	setInterval(() => popOut.remove(), 1000)
 }
 
-// let worker
-// function startWorker() {
-// 	worker = new Worker('worker.js')
-// }
+function doUpgrade(x) {
+	if (score >= upgrades[x][0]) {
+		score -= upgrades[x][0]
+		newScore()
 
-// function stopWorker() {
-// 	worker.terminate()
-// }
+		// change count of upgrade x
+		let count = +upgradeCountersList[x].textContent + 1
+		upgradeCountersList[x].textContent = count
+
+		// change scoreIndex
+		scoreIndex += upgrades[x][2]
+		speed = 1000 * scoreIndex / newInterval
+		if (speed != Infinity) newSpeed()
+
+		// change value of upgrade x
+		upgrades[x][0] = Math.floor(upgrades[x][0] * ratio)
+		upgradesList[x].textContent = upgrades[x][1] + ' (' + upgrades[x][0] + ')'
+	}
+}
+
 
 // auto-clicker
 let autoClickInterval;
@@ -116,22 +108,20 @@ function startInterval(interval) {
 document.addEventListener('click', function(event) {
 	// if clicked on player
 	if (event.target.className == 'player') {
-		score += scoreIndex
+		score += scoreIndex + cheat
 		newScore()
 		addScorePopOut()
 	}
 
-	// if clicked on upgrade 1
-	else if (event.target.id == 'up1') {
-		if (score >= CLICKER_VALUE) {
-			score -= CLICKER_VALUE
+	// if clicked on upgrade 0
+	else if (event.target.id == 0) {
+		if (score >= upgrades[0][0]) {
+			score -= upgrades[0][0]
 			newScore()
 
 			// change count of upgrade
-			let count = +upgrade1.getAttribute('count') + 1
-			upgrade1.setAttribute('count', count)
-			upgrade1.setAttribute('value', count * CLICKER_VALUE)
-			upgradeCounter1.textContent = +upgradeCounter1.textContent + 1
+			let count = +upgradeCountersList[0].textContent + 1
+			upgradeCountersList[0].textContent = count
 
 			// create new interval
 			newInterval = 8000 / count
@@ -140,52 +130,18 @@ document.addEventListener('click', function(event) {
 			clearInterval(autoClickInterval)
 			startInterval(newInterval)
 
-			console.log('+cursor, total: ' + upgrade1.getAttribute('count'))
-			console.log('speed: ' + speed)
+			// change value of upgrade 1
+			upgrades[0][0] = Math.floor(upgrades[0][0] * ratio)
+			upgradesList[0].textContent = upgrades[0][1] + ' (' + upgrades[0][0] + ')'
 		}
 	}
+
+	// if clicked on upgrade 1
+	else if (event.target.id == 1) doUpgrade(1)
 
 	// if clicked on upgrade 2
-	else if (event.target.id == 'up2') {
-		if (score >= MAGNET_VALUE) {
-			score -= MAGNET_VALUE
-			newScore()
-
-			// change count of upgrade
-			let count = +upgrade2.getAttribute('count') + 1
-			upgrade2.setAttribute('count', count)
-			upgrade2.setAttribute('value', count * MAGNET_VALUE)
-			upgradeCounter2.textContent = +upgradeCounter2.textContent + 1
-
-			// change scoreIndex
-			scoreIndex += magnetNetWorth
-			speed = 1000 * scoreIndex / newInterval
-			newSpeed()
-
-			console.log('+magnet, total: ' + upgrade2.getAttribute('count'))
-			console.log('speed: ' + speed)
-		}
-	}
+	else if (event.target.id == 2) doUpgrade(2)
 
 	// if clicked on upgrade 3
-	else if (event.target.id == 'up3') {
-		if (score >= GRAVITY_VALUE) {
-			score -= GRAVITY_VALUE
-			newScore()
-
-			// change count of upgrade
-			let count = +upgrade3.getAttribute('count') + 1
-			upgrade3.setAttribute('count', count)
-			upgrade3.setAttribute('value', count * GRAVITY_VALUE)
-			upgradeCounter3.textContent = +upgradeCounter3.textContent + 1
-
-			// change scoreIndex
-			scoreIndex += gravityNetWorth
-			speed = 1000 * scoreIndex / newInterval
-			newSpeed()
-
-			console.log('+gravity, total: ' + upgrade3.getAttribute('count'))
-			console.log('speed: ' + speed)
-		}
-	}
+	else if (event.target.id == 3) doUpgrade(3)
 })
