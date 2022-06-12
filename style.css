@@ -29,7 +29,7 @@ body {
 .player {
 	width: var(--player-size);
 	height: var(--player-size);
-	background-color: #deac2c;
+	background: linear-gradient(90deg, #deac2c, #d4572a);
 	margin: 0;
 	cursor: pointer;
 	border-radius: 50%;
