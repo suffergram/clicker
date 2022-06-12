@@ -1,11 +1,11 @@
 body {
-	background-color: #232529;
+	background: linear-gradient(90deg, #e66465, #222a7a);
 	color: var(--text-color);
-	font-family: tahoma;
+	font-family: sans-serif, tahoma;
 	margin: 0;
 
-	--player-size: 40px;
-	--text-color: #bbb;
+	--player-size: 160px;
+	--text-color: #fff;
 	--button-text-size: 1em;
 	--button-height: 60px;
 	--score-text-position: 40px;
@@ -29,16 +29,16 @@ body {
 .player {
 	width: var(--player-size);
 	height: var(--player-size);
-	background-color: #002a7f;
+	background-color: #deac2c;
 	margin: 0;
 	cursor: pointer;
 	border-radius: 50%;
 }
 
 .player:active {
-	width: calc(var(--player-size) - 2px);
-	height: calc(var(--player-size) - 2px);
-	background-color: #113b8f;
+	width: calc(var(--player-size) - (var(--player-size) / 20));
+	height: calc(var(--player-size) - (var(--player-size) / 20));
+	/*opacity: 0.8;*/
 }
 
 .score {
@@ -79,7 +79,7 @@ body {
 }
 
 .menu button:hover {
-	background-color: rgba(255,255,255, 0.025);
+	background-color: rgba(255,255,255, 0.05);
 }
 
 .menu button {
@@ -112,4 +112,3 @@ body {
 	right: var(--score-text-position);
 	bottom: var(--score-text-position);
 }
-
