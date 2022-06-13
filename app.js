@@ -1,13 +1,17 @@
 let upgrades = [
-	[15, 'CLICKER', 0.1],
-	[100, 'ROCK', 1],
-	[1000, 'MOUNTAIN', 8],
-	[12000, 'CONTINENT', 47],
-	[130000, 'PLANET', 260],
-	[1400000, 'STAR', 1400],
+	[15, 'GRAIN', 0.1],
+	[100, 'DUST', 1],
+	[1000, 'ROCK', 8],
+	[12000, 'METEOROID', 47],
+	[130000, 'ASTEROID', 260],
+	[1400000, 'PLANET', 1400],
+	[20000000, 'STAR', 7800],
+	[330000000, 'STAR CLUSTER', 44000],
+	[5100000000, 'NEBULA', 260000],
+	[75000000000, 'GALAXY', 1600000],
 ]
 
-const ratio = 1.22
+const ratio = 1.15
 let scoreIndex = 0
 let speed = 0
 let newInterval = 0
@@ -26,7 +30,7 @@ for (let x = 0; x < upgrades.length; x++) {
 	let upgrade = document.createElement('button')
 	upgrade.setAttribute('id', x)
 	upgrade.classList = 'upgrade'
-	upgrade.textContent = upgrades[x][1] + ' (' + upgrades[x][0] + ') +' + upgrades[x][2]
+	upgrade.textContent = getNewDescription(x)
 	let upgradeCounter = document.createElement('div')
 	upgradeCounter.classList = 'upgradecounter'
 	upgradeCounter.textContent = 0
@@ -66,8 +70,8 @@ function newSpeed() {
 	speedText.innerHTML = 'current speed: ' + scoreIndex + ' points per ' + 1 + ' second'
 }
 
-function newDescription() {
-	upgrade.textContent = upgrades[x][1] + ' (' + upgrades[x][0] + ') +' + upgrades[x][2]
+function getNewDescription(x) {
+	return upgrades[x][1] + ' (' + upgrades[x][0] + ') +' + upgrades[x][2]
 }
 
 function addScorePopOut() {
@@ -96,8 +100,8 @@ function doUpgrade(x) {
 		newSpeed()
 
 		// change value of upgrade x
-		upgrades[x][0] = Math.floor(upgrades[x][0] * ratio)
-		upgradesList[x].textContent = upgrades[x][1] + ' (' + upgrades[x][0] + ') +' + upgrades[x][2]
+		upgrades[x][0] = Math.floor(upgrades[x][0] * (ratio ** count))
+		upgradesList[x].textContent = getNewDescription(x)
 	}
 }
 
