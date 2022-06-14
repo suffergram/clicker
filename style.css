@@ -3,17 +3,23 @@ body {
 	color: var(--text-color);
 	font-family: sans-serif, tahoma;
 	margin: 0;
+	user-select: none;
 
 	--player-size: 160px;
 	--text-color: #fff;
-	--button-text-size: 1em;
+	--button-text-size: 0.9em;
 	--button-height: 60px;
 	--score-text-position: 40px;
+	--menu-width: 20%;
+}
+
+strong {
+	font-size: calc(var(--button-text-size) + 0.3em);
 }
 
 @keyframes pop {
 	to {
-		margin-bottom: 250px;
+		margin-top: -35%;
 		opacity: 0;
 	}
 }
@@ -38,7 +44,6 @@ body {
 .player:active {
 	width: calc(var(--player-size) - (var(--player-size) / 20));
 	height: calc(var(--player-size) - (var(--player-size) / 20));
-	/*opacity: 0.8;*/
 }
 
 .score {
@@ -51,7 +56,8 @@ body {
 .popout {
 	position: fixed;
 	font-size: 25px;
-	margin-left: 50%;
+	margin-top: -15%;
+	margin-right: -25%;
 	animation-name: pop;
 	animation-duration: 1s;
 	animation-timing-function: linear;
@@ -60,22 +66,23 @@ body {
 .menu {
 	position: fixed;
 	left: 0;
-	width: 20%;
+	width: var(--menu-width);
 	height: 100vh;
 	background-color: rgba(0, 0, 0, 0.1);
 }
 
-.menu div {
+.menu > div {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	cursor: default;
 }
 
 .menu div:first-child {
 	height: var(--button-height);
 	border-bottom: 1px solid rgba(255,255,255, 0.1);
+	font-size: calc(var(--button-height) / 2.5);
+	overflow: hidden;
 }
 
 .menu button:hover {
@@ -86,24 +93,25 @@ body {
 	width: 80%;
 	height: var(--button-height);
 	font-size: var(--button-text-size);
+	font-weight: bold;
 	background: none;
 	border: none;
 	color: var(--text-color);
 	cursor: pointer;
 	border-bottom: 1px solid rgba(255,255,255, 0.1);
+	z-index: 100;
 }
 
 .menu button:active {
-	font-size: calc(var(--button-text-size) - 0.1em);
+	line-height: calc(var(--button-height) + 1px);
 }
 
-.upgradecounter {
+.buildingcounter {
 	width: 20%;
 	height: var(--button-height);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	cursor: default;
 	border: none;
 }
 
@@ -112,3 +120,34 @@ body {
 	right: var(--score-text-position);
 	bottom: var(--score-text-position);
 }
+
+.building {
+	position: fixed;
+	width: var(--menu-width);
+	font-size: calc(var(--button-height) / 1.5);
+	opacity: 0.1;
+	font-style: italic;
+	overflow: hidden;
+	white-space: nowrap;
+	z-index: 0;
+}
+
+.info {
+	width: 500px;
+	height: 200px;
+	position: fixed;
+	left: calc(var(--menu-width) + var(--score-text-position));
+	top: var(--button-height);
+	background: rgba(0, 0, 0, 0.1);
+	padding: calc(var(--score-text-position) / 2);
+}
+
+.info p {
+	margin: 5px 0;
+}
+
+.info p:first-child {
+	font-size: calc(var(--button-height) / 3);
+	font-style: italic;
+}
+
