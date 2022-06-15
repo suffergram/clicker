@@ -133,8 +133,6 @@ strong {
 }
 
 .info {
-	width: 500px;
-	height: 200px;
 	position: fixed;
 	left: calc(var(--menu-width) + var(--score-text-position));
 	top: var(--button-height);
@@ -151,3 +149,6 @@ strong {
 	font-style: italic;
 }
 
+.info em {
+	color: #deac2c;
+}
