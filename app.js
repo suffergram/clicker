@@ -14,7 +14,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 9999999999
+let cheat = 0
 
 
 // create building menu
@@ -37,7 +37,7 @@ for (let x = 0; x < buildings.length; x++) {
 	let buildingCost = document.createElement('button')
 	buildingCost.id = x
 	buildingCost.classList = 'cost'
-	buildingCost.textContent = getNewCost(x)
+	buildingCost.textContent = getNewValue(x)
 
 	let buildingCounter = document.createElement('div')
 	buildingCounter.classList = 'buildingcounter'
@@ -82,16 +82,23 @@ function newScore() {
 }
 
 function newSpeed() {
-	speedText.innerHTML = '<strong>' + scoreIndex + '</strong> points per ' + 1 + ' second'
+	speedText.innerHTML = '<strong>' + scoreIndex + '</strong> points per second'
 }
 
-function getNewCost(x) {
-	let buildingPrice = buildings[x][3]
-	if (buildingPrice >= 10 ** 12) buildingPrice = (buildingPrice / 10 ** 12).toFixed(3) + 'T'
-	if (buildingPrice >= 10 ** 9) buildingPrice = (buildingPrice / 10 ** 9).toFixed(3) + 'B'
-	if (buildingPrice >= 10 ** 6) buildingPrice = (buildingPrice / 10 ** 6).toFixed(3) + 'M'
+function getNewValue(x, y = 3) {
+	let value = buildings[x][y]
+	value = formatValue(value)
+	return value
+}
 
-	return '' + buildingPrice
+function formatValue(x) {
+	if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
+	else if (x >= 10 ** 18) x = (x / 10 ** 18).toFixed(3) + 'Q'
+	else if (x >= 10 ** 15) x = (x / 10 ** 15).toFixed(3) + 'q'
+	else if (x >= 10 ** 12) x = (x / 10 ** 12).toFixed(3) + 'T'
+	else if (x >= 10 ** 9) x = (x / 10 ** 9).toFixed(3) + 'B'
+	else if (x >= 10 ** 6) x = (x / 10 ** 6).toFixed(3) + 'M'
+	return x
 }
 
 function addScorePopOut() {
@@ -121,8 +128,20 @@ function addBuilding(x) {
 
 		// change value of building x
 		buildings[x][3] = Math.floor(buildings[x][0] * (ratio ** count))
-		buildingsList[x].textContent = getNewCost(x)
+		buildingsList[x].textContent = getNewValue(x)
 	}
+}
+
+function getBuldingInfo(x) {
+	let name = x.parentNode.querySelector('.building').innerHTML
+	let perSecond = buildings[+x.id][2]
+	let amount = x.parentNode.querySelector('.buildingcounter').innerHTML
+	let currentCost = getNewValue(+x.id)
+
+	info.innerHTML = '<p>' + name + '</p>\n'
+	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
+	if (amount != 0) info.innerHTML += '<p><em>' + amount + '</em> of them, make <em>' + formatValue(amount * perSecond) + '</em> points per second</p>\n'
+	info.innerHTML += '<p>and currently costs <em>' + currentCost + '</em></p>\n'
 }
 
 
@@ -156,27 +175,26 @@ document.addEventListener('click', function(event) {
 
 	// if clicked on buldings
 	else for (let i = 0; i < buildings.length; i++) {
-		if (event.target.id == i) addBuilding(i)
+		if (event.target.id == i) {
+			addBuilding(i)
+			getBuldingInfo(event.target)
+		}
 	}
 })
 
 // mouseover handler
 menu.addEventListener('mouseover', function(event) {
 	if (event.target.className == 'cost') {
-		// event.target.id
-		info.innerHTML = '<p>' + event.target.parentNode.querySelector('.building').innerHTML + '</p>\n'
-		info.innerHTML += '<p>makes ' + buildings[+event.target.id][2] + ' points per second</p>\n'
-		info.innerHTML += '<p>amount: ' + event.target.parentNode.querySelector('.buildingcounter').innerHTML + '</p>\n'
-		info.innerHTML += '<p>current cost: ' + buildings[+event.target.id][3] + '</p>\n'
+		getBuldingInfo(event.target)
 
 		info.hidden = false
 	}
 })
 
-// menu.addEventListener('mouseout', function(event) {
-// 	if (event.target.className == 'cost') {
-// 		info.hidden = true
-// 	}
-// })
+menu.addEventListener('mouseout', function(event) {
+	if (event.target.className == 'cost') {
+		info.hidden = true
+	}
+})
 
 
