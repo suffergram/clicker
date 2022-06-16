@@ -14,7 +14,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 0
+let cheat = 9999999999999
 
 
 // create building menu
@@ -73,7 +73,8 @@ speedText.classList = 'speed'
 speedText.textContent = ''
 container.append(speedText)
 
-let score = BigInt(+scoreText.textContent);
+// let score = BigInt(+scoreText.textContent)
+let score = 0n
 
 
 // functions
@@ -82,7 +83,7 @@ function newScore() {
 }
 
 function newSpeed() {
-	speedText.innerHTML = '<strong>' + scoreIndex + '</strong> points per second'
+	speedText.innerHTML = '<strong>' + formatValue(scoreIndex) + '</strong> points per second'
 }
 
 function getNewValue(x, y = 3) {
@@ -92,12 +93,12 @@ function getNewValue(x, y = 3) {
 }
 
 function formatValue(x) {
-	if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
+		 if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
 	else if (x >= 10 ** 18) x = (x / 10 ** 18).toFixed(3) + 'Q'
 	else if (x >= 10 ** 15) x = (x / 10 ** 15).toFixed(3) + 'q'
 	else if (x >= 10 ** 12) x = (x / 10 ** 12).toFixed(3) + 'T'
-	else if (x >= 10 ** 9) x = (x / 10 ** 9).toFixed(3) + 'B'
-	else if (x >= 10 ** 6) x = (x / 10 ** 6).toFixed(3) + 'M'
+	else if (x >= 10 ** 9 ) x = (x / 10 ** 9 ).toFixed(3) + 'B'
+	else if (x >= 10 ** 6 ) x = (x / 10 ** 6 ).toFixed(3) + 'M'
 	return x
 }
 
@@ -137,11 +138,17 @@ function getBuldingInfo(x) {
 	let perSecond = buildings[+x.id][2]
 	let amount = x.parentNode.querySelector('.buildingcounter').innerHTML
 	let currentCost = getNewValue(+x.id)
+	let xCoord = x.getBoundingClientRect()
+
+	info.style.top = xCoord.top + 'px';
 
 	info.innerHTML = '<p>' + name + '</p>\n'
 	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
-	if (amount != 0) info.innerHTML += '<p><em>' + amount + '</em> of them, make <em>' + formatValue(amount * perSecond) + '</em> points per second</p>\n'
 	info.innerHTML += '<p>and currently costs <em>' + currentCost + '</em></p>\n'
+
+	if (amount > 1) {
+		info.innerHTML += '<p>your <em>' + amount + '</em> ' + name.toLowerCase() + 's make <em>' + formatValue(+(amount * perSecond).toFixed(1)) + '</em> points per second</p>\n'
+	}
 }
 
 
@@ -186,7 +193,6 @@ document.addEventListener('click', function(event) {
 menu.addEventListener('mouseover', function(event) {
 	if (event.target.className == 'cost') {
 		getBuldingInfo(event.target)
-
 		info.hidden = false
 	}
 })
@@ -194,6 +200,7 @@ menu.addEventListener('mouseover', function(event) {
 menu.addEventListener('mouseout', function(event) {
 	if (event.target.className == 'cost') {
 		info.hidden = true
+		info.innerHTML = ''
 	}
 })
 
