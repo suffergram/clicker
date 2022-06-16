@@ -51,6 +51,7 @@ strong {
 	bottom: var(--score-text-position);
 	font-size: 30px;
 	cursor: default;
+	z-index: 2;
 }
 
 .popout {
@@ -134,14 +135,16 @@ strong {
 
 .info {
 	position: fixed;
-	left: calc(var(--menu-width) + var(--score-text-position));
-	top: var(--button-height);
+	left: calc(var(--menu-width) + var(--score-text-position) / 2);
 	background: rgba(0, 0, 0, 0.1);
 	padding: calc(var(--score-text-position) / 2);
+	backdrop-filter: blur(2px);
+	z-index: 3;
 }
 
 .info p {
 	margin: 5px 0;
+	font-size: 0.9em;
 }
 
 .info p:first-child {
