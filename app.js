@@ -14,7 +14,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 0
+let cheat = 99
 
 
 // create building menu
@@ -135,9 +135,9 @@ function addBuilding(x) {
 
 function getBuldingInfo(x) {
 	let name = x.parentNode.querySelector('.building').innerHTML
-	let perSecond = buildings[+x.id][2]
+	let perSecond = buildings[+x.getAttribute('object')][2]
 	let amount = x.parentNode.querySelector('.buildingcounter').innerHTML
-	let currentCost = getNewValue(+x.id)
+	let currentCost = getNewValue(+x.getAttribute('object'))
 	let xCoord = x.getBoundingClientRect()
 
 	info.style.top = xCoord.top + 'px'
