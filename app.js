@@ -14,7 +14,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 9999999999999
+let cheat = 99
 
 
 // create building menu
@@ -23,7 +23,6 @@ menu.classList = 'menu'
 container.append(menu)
 menu.append(document.createElement('div'))
 menu.children[0].textContent = 'OBJECTS'
-menu.children[0].id = 'none'
 
 // create buildings
 for (let x = 0; x < buildings.length; x++) {
@@ -35,7 +34,8 @@ for (let x = 0; x < buildings.length; x++) {
 	building.textContent = buildings[x][1]
 
 	let buildingCost = document.createElement('button')
-	buildingCost.id = x
+	// buildingCost.id = x
+	buildingCost.setAttribute('object', x)
 	buildingCost.classList = 'cost'
 	buildingCost.textContent = getNewValue(x)
 
@@ -140,7 +140,8 @@ function getBuldingInfo(x) {
 	let currentCost = getNewValue(+x.id)
 	let xCoord = x.getBoundingClientRect()
 
-	info.style.top = xCoord.top + 'px';
+	info.style.top = xCoord.top + 'px'
+	info.style.left = xCoord.right + 10 + 'px'
 
 	info.innerHTML = '<p>' + name + '</p>\n'
 	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
@@ -182,9 +183,10 @@ document.addEventListener('click', function(event) {
 
 	// if clicked on buldings
 	else for (let i = 0; i < buildings.length; i++) {
-		if (event.target.id == i) {
+		if (event.target.getAttribute('object') == i) {
 			addBuilding(i)
 			getBuldingInfo(event.target)
+			console.log(+event.target.id)
 		}
 	}
 })
