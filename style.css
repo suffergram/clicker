@@ -4,6 +4,7 @@ body {
 	font-family: sans-serif, tahoma;
 	margin: 0;
 	user-select: none;
+	-webkit-tap-highlight-color: transparent;
 
 	--player-size: 160px;
 	--text-color: #fff;
