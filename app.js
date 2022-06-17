@@ -14,7 +14,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 99
+let cheat = 0
 
 
 // create building menu
