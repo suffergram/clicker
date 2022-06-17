@@ -1,3 +1,4 @@
+// buildings
 const buildings = [
 	[15, 'GRAIN', 0.1],
 	[100, 'DUST', 1],
@@ -14,8 +15,11 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 0
+let cheat = 99
 
+// upgrades
+// import { upgrades } from 'upgrades.js'
+// console.log(upgrades)
 
 // create building menu
 let menu = document.createElement('div')
@@ -186,7 +190,6 @@ document.addEventListener('click', function(event) {
 		if (event.target.getAttribute('object') == i) {
 			addBuilding(i)
 			getBuldingInfo(event.target)
-			console.log(+event.target.id)
 		}
 	}
 })
