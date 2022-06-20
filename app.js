@@ -15,7 +15,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 99
+let cheat = 0
 
 // upgrades
 // import { upgrades } from 'upgrades.js'
@@ -83,7 +83,7 @@ let score = 0n
 
 // functions
 function newScore() {
-	scoreText.textContent = score
+	scoreText.textContent = formatValue(score)
 }
 
 function newSpeed() {
@@ -97,6 +97,8 @@ function getNewValue(x, y = 3) {
 }
 
 function formatValue(x) {
+	if (x > Number.MAX_SAFE_INTEGER) return x
+		x = Number(x)
 		 if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
 	else if (x >= 10 ** 18) x = (x / 10 ** 18).toFixed(3) + 'Q'
 	else if (x >= 10 ** 15) x = (x / 10 ** 15).toFixed(3) + 'q'
@@ -109,7 +111,7 @@ function formatValue(x) {
 function addScorePopOut() {
 	let popOut = document.createElement('div')
 	popOut.classList = 'popout'
-	popOut.textContent = '+' + (1 + cheat)
+	popOut.textContent = '+' + formatValue(1 + cheat)
 	container.append(popOut)
 	setInterval(() => popOut.remove(), 1000)
 }
@@ -208,5 +210,4 @@ menu.addEventListener('mouseout', function(event) {
 		info.innerHTML = ''
 	}
 })
-
 
