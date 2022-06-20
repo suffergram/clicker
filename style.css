@@ -24,7 +24,7 @@ strong {
 
 @keyframes pop {
 	to {
-		margin-top: -35%;
+		margin-bottom: 60vh;
 		opacity: 0;
 	}
 }
@@ -38,11 +38,13 @@ strong {
 }
 
 .player {
+	position: fixed;
 	width: var(--player-size);
 	height: var(--player-size);
 	background: linear-gradient(90deg, #deac2c, #d4572a);
 	margin: 0;
 	cursor: pointer;
+	box-shadow: 0 0 20px rgba(0,0,0,.3);
 	border-radius: 50%;
 	z-index: 50;
 }
@@ -63,8 +65,7 @@ strong {
 .popout {
 	position: fixed;
 	font-size: 25px;
-	margin-top: -15%;
-	margin-right: -25%;
+	margin-bottom: 40vh;
 	animation-name: pop;
 	animation-duration: 1s;
 	animation-timing-function: linear;
@@ -73,10 +74,10 @@ strong {
 .menu {
 	position: fixed;
 	left: 0;
-	/*margin-left: calc(var(--menu-width) * -1);*/
 	width: var(--menu-width);
-	height: 100vh;
+	height: 100%;
 	background-color: rgba(0, 0, 0, 0.1);
+	overflow-y: auto;
 }
 
 .menu > div {
@@ -90,7 +91,6 @@ strong {
 	height: var(--button-height);
 	border-bottom: 1px solid rgba(255,255,255, 0.1);
 	font-size: calc(var(--button-height) / 2.5);
-	overflow: hidden;
 	justify-content: center;
 }
 
@@ -99,8 +99,8 @@ strong {
 }
 
 .menu button {
-	position: fixed;
-	width: var(--menu-width);
+	position: absolute;
+	width: 100%;
 	height: var(--button-height);
 	font-size: var(--button-text-size);
 	font-weight: bold;
@@ -109,6 +109,7 @@ strong {
 	color: var(--text-color);
 	cursor: pointer;
 	border-bottom: 1px solid rgba(255,255,255, 0.1);
+	left: 0;
 	z-index: 100;
 }
 
@@ -132,13 +133,14 @@ strong {
 }
 
 .building {
-	position: fixed;
-	width: var(--menu-width);
+	position: absolute;
+	width: 100%;
 	font-size: calc(var(--button-height) / 1.5);
 	opacity: 0.1;
 	font-style: italic;
 	overflow: hidden;
 	white-space: nowrap;
+	left: 0;
 	z-index: 0;
 }
 
@@ -164,20 +166,10 @@ strong {
 	color: #deac2c;
 }
 
-@media (max-width: 420px) {
-	.score {
-		bottom: 15%;
-	}
-
-	.speed {
-		right: auto;
-	}
-
+@media (max-width: 420px), (max-height: 420px) {
 	.building {
-		width: auto;
-		overflow: auto;
-		left: var(--menu-width);
-		z-index: 0;
+		width: calc(100vw * 0.8);
+		left: 100%;
 	}
 
 	.player {
@@ -194,10 +186,33 @@ strong {
 	.buildingcounter {
 		width: 100%;
 		font-size: calc(var(--button-height) / 1.5);
-		opacity: 0.1;
+		opacity: 0.5;
+		color: #deac2c;
 		font-style: italic;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+
+	.info {
+		padding: calc(var(--score-text-position) / 4);
+	}
+
+	.menu {
+		overflow: visible;
+	}
+
+	.menu > div:first-child {
+		display: none;
+	}
+}
+
+@media (max-width: 420px) {
+	.score {
+		bottom: 15%;
+	}
+
+	.speed {
+		right: auto;
 	}
 
 	.info {
@@ -205,30 +220,11 @@ strong {
 		width: calc(100% - var(--menu-width));
 		padding: calc(var(--score-text-position) / 4);
 	}
+}
 
-	.popout {
-		margin-top: 0;
-		margin-right: -65%;
-	}
-
+@media (max-height: 420px) {
 	.menu {
-		top: var(--button-height);
-	}
-
-	.menu > div:first-child {
-		width: 100%;
-		position: fixed;
-		top: 0;
-		background-color: rgba(0, 0, 0, 0.1)
+		/*height: 100vh;*/
 	}
 }
 
-@media (max-height: 700px) {
-	.menu {
-		top: 0;
-	}
-
-	.menu > div:first-child {
-		display: none;
-	}
-}
