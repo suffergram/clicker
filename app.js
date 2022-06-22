@@ -15,11 +15,7 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 99999999
-
-// upgrades
-// import { upgrades } from 'upgrades.js'
-// console.log(upgrades)
+let cheat = 0
 
 // make building menu
 let menu = document.createElement('div')
@@ -81,7 +77,6 @@ speedText.classList = 'speed'
 speedText.textContent = ''
 container.append(speedText)
 
-// let score = BigInt(+scoreText.textContent)
 let score = 0n
 
 
