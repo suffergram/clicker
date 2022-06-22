@@ -244,8 +244,13 @@ strong {
 	}
 }
 
-@media (max-height: 420px) {
-	.menu {
-		/*height: 100vh;*/
+@media (max-height: 280px) {
+	.score {
+		right: var(--score-text-position);
+		bottom: calc(var(--score-text-position) * 2);
+	}
+
+	.popout {
+		right: var(--score-text-position);
 	}
 }
