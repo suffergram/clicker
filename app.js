@@ -209,3 +209,4 @@ menu.addEventListener('mouseout', function(event) {
 		info.innerHTML = ''
 	}
 })
+
