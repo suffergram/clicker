@@ -1,251 +1,216 @@
-body {
-	background: linear-gradient(90deg, #e66465, #222a7a);
-	color: var(--text-color);
-	font-family: sans-serif, tahoma;
-	margin: 0;
-	user-select: none;
-	-webkit-tap-highlight-color: transparent;
+// buildings
+const buildings = [
+	[15, 'GRAIN', 0.1],
+	[100, 'DUST', 1],
+	[1000, 'ROCK', 8],
+	[12000, 'METEOROID', 47],
+	[130000, 'ASTEROID', 260],
+	[1400000, 'PLANET', 1400],
+	[20000000, 'STAR', 7800],
+	[330000000, 'STAR CLUSTER', 44000],
+	[5100000000, 'NEBULA', 260000],
+	[75000000000, 'GALAXY', 1600000],
+]
 
-	--player-size: 160px;
-	--text-color: #fff;
-	--button-text-size: 0.9em;
-	--button-height: 60px;
-	--score-text-position: 40px;
-	--menu-width: 20%;
-	--menu-bg-color: rgba(0, 0, 0, .1);
+const ratio = 1.15
+let scoreIndex = 0
+let newInterval = 0
+let cheat = 99999999
+
+// upgrades
+// import { upgrades } from 'upgrades.js'
+// console.log(upgrades)
+
+// make building menu
+let menu = document.createElement('div')
+menu.classList = 'menu'
+container.append(menu)
+menu.append(document.createElement('div'))
+menu.children[0].textContent = 'OBJECTS'
+
+// make buildings
+for (let x = 0; x < buildings.length; x++) {
+	buildings[x][3] = buildings[x][0]
+	menu.append(document.createElement('div'))
+
+	let building = document.createElement('div')
+	building.classList = 'building'
+	building.textContent = buildings[x][1]
+
+	let buildingCost = document.createElement('button')
+	buildingCost.setAttribute('object', x)
+	buildingCost.classList = 'cost'
+	buildingCost.textContent = getNewValue(x)
+
+	let buildingCounter = document.createElement('div')
+	buildingCounter.classList = 'buildingcounter'
+	buildingCounter.textContent = 0
+	
+	menu.children[x + 1].append(buildingCost, buildingCounter, building)
 }
 
-*:focus {
-    outline: 0 !important;
+// make empty space after all buildings
+let emptyDiv = document.createElement('div')
+emptyDiv.classList = 'empty'
+menu.append(emptyDiv)
+
+let buildingsList = document.querySelectorAll('.cost')
+let buildingCountersList = document.querySelectorAll('.buildingcounter')
+
+// make info section
+let info = document.createElement('div')
+info.classList = 'info'
+info.textContent = ''
+info.hidden = true
+container.append(info)
+
+// make player with .player class
+let player = document.createElement('div')
+player.classList = 'player'
+container.append(player)
+
+// make score counter with .score class
+let scoreText = document.createElement('div')
+scoreText.classList = 'score'
+scoreText.textContent = ''
+container.append(scoreText)
+
+// make speed metric
+let speedText = document.createElement('div')
+speedText.classList = 'speed'
+speedText.textContent = ''
+container.append(speedText)
+
+// let score = BigInt(+scoreText.textContent)
+let score = 0n
+
+
+// functions
+function newScore() {
+	scoreText.textContent = formatValue(score)
 }
 
-strong {
-	font-size: calc(var(--button-text-size) + 0.3em);
+function newSpeed() {
+	speedText.innerHTML = '<strong>' + formatValue(scoreIndex) + '</strong> points per second'
 }
 
-@keyframes pop {
-	to {
-		margin-bottom: 70vh;
-		opacity: 0;
+function getNewValue(x, y = 3) {
+	let value = buildings[x][y]
+	value = formatValue(value)
+	return value
+}
+
+function formatValue(x) {
+	if (x > Number.MAX_SAFE_INTEGER) return x
+		x = Number(x)
+		 if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
+	else if (x >= 10 ** 18) x = (x / 10 ** 18).toFixed(3) + 'Q'
+	else if (x >= 10 ** 15) x = (x / 10 ** 15).toFixed(3) + 'q'
+	else if (x >= 10 ** 12) x = (x / 10 ** 12).toFixed(3) + 'T'
+	else if (x >= 10 ** 9 ) x = (x / 10 ** 9 ).toFixed(3) + 'B'
+	else if (x >= 10 ** 6 ) x = (x / 10 ** 6 ).toFixed(3) + 'M'
+	return x
+}
+
+function addScorePopOut() {
+	let popOut = document.createElement('div')
+	popOut.classList = 'popout'
+	popOut.textContent = '+' + formatValue(1 + cheat)
+	container.append(popOut)
+	setInterval(() => popOut.remove(), 1000)
+}
+
+function addBuilding(x) {
+	if (score >= BigInt(buildings[x][3])) {
+		score -= BigInt(buildings[x][3])
+		newScore()
+
+		// change count of building x
+		let count = +buildingCountersList[x].textContent + 1
+		buildingCountersList[x].textContent = count
+
+		// create new interval
+		scoreIndex += buildings[x][2]
+		scoreIndex = +scoreIndex.toFixed(1)
+		newInterval = 10000 / scoreIndex / 10
+		clearInterval(autoClickInterval)
+		startInterval(scoreIndex)
+		newSpeed()
+
+		// change value of building x
+		buildings[x][3] = Math.floor(buildings[x][0] * (ratio ** count))
+		buildingsList[x].textContent = getNewValue(x)
 	}
 }
 
-#container {
-	width: 100%;
-	height: 100vh;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
+function getBuldingInfo(x) {
+	let name = x.parentNode.querySelector('.building').innerHTML
+	let perSecond = buildings[+x.getAttribute('object')][2]
+	let amount = x.parentNode.querySelector('.buildingcounter').innerHTML
+	let currentCost = getNewValue(+x.getAttribute('object'))
+	let xCoord = x.getBoundingClientRect()
 
-.player {
-	position: fixed;
-	width: var(--player-size);
-	height: var(--player-size);
-	background: linear-gradient(90deg, #deac2c, #d4572a);
-	margin: 0;
-	cursor: pointer;
-	box-shadow: 0 0 20px rgba(0,0,0,.3);
-	border-radius: 50%;
-	z-index: 50;
-}
+	info.style.top = xCoord.top + 'px'
+	info.style.left = xCoord.right + 10 + 'px'
 
-.player:active {
-	width: calc(var(--player-size) - (var(--player-size) / 20));
-	height: calc(var(--player-size) - (var(--player-size) / 20));
-}
+	info.innerHTML = '<p>' + name + '</p>\n'
+	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
+	info.innerHTML += '<p>and currently costs <em>' + currentCost + '</em></p>\n'
 
-.score {
-	position: fixed;
-	bottom: var(--score-text-position);
-	font-size: 30px;
-	cursor: default;
-	z-index: 2;
-}
-
-.popout {
-	position: fixed;
-	font-size: 25px;
-	margin-bottom: 50vh;
-	animation-name: pop;
-	animation-duration: 1s;
-	animation-timing-function: linear;
-}
-
-.menu {
-	position: absolute;
-	left: 0;
-	width: var(--menu-width);
-	height: 100vh;
-	background-color: var(--menu-bg-color);
-	overflow-y: auto;
-	overflow-x: hidden;
-	z-index: 0;
-}
-
-.menu > div {
-	display: flex;
-	flex-direction: row;
-	justify-content: right;
-	align-items: center;
-}
-
-.menu div:first-child {
-	height: var(--button-height);
-	border-bottom: 1px solid rgba(255,255,255, 0.1);
-	font-size: calc(var(--button-height) / 2.5);
-	justify-content: center;
-}
-
-.menu button:hover {
-	background-color: rgba(255,255,255, 0.05);
-}
-
-.menu button {
-	position: relative;
-	width: 100%;
-	height: var(--button-height);
-	font-size: var(--button-text-size);
-	font-weight: bold;
-	background: none;
-	border: none;
-	color: var(--text-color);
-	cursor: pointer;
-	border-bottom: 1px solid rgba(255,255,255, 0.1);
-	left: 0;
-	z-index: 100;
-}
-
-.menu button:active {
-	line-height: calc(var(--button-height) + 1px);
-}
-
-.buildingcounter {
-	position: absolute;
-	width: 20%;
-	height: var(--button-height);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border: none;
-}
-
-.speed {
-	position: fixed;
-	right: var(--score-text-position);
-	bottom: var(--score-text-position);
-}
-
-.building {
-	position: absolute;
-	font-size: calc(var(--button-height) / 1.5);
-	opacity: 0.1;
-	font-style: italic;
-	white-space: nowrap;
-	left: 0;
-	height: var(--button-height);
-	overflow-x: visible;
-	z-index: 1;
-}
-
-.info {
-	position: fixed;
-	background: rgba(0, 0, 0, 0.1);
-	padding: calc(var(--score-text-position) / 2);
-	backdrop-filter: blur(2px);
-	z-index: 80;
-}
-
-.info p {
-	margin: 5px 0;
-	font-size: 0.9em;
-}
-
-.info p:first-child {
-	font-size: calc(var(--button-height) / 3);
-	font-style: italic;
-}
-
-.info em {
-	color: #deac2c;
-}
-
-.empty {
-	height: var(--button-height);
-	width: var(--menu-width);
-}
-
-@media (max-width: 1050px), (max-height: 420px) {
-	.building {
-		left: var(--menu-width);
-	}
-
-	.player {
-		opacity: 0.8;
-		width: calc(var(--player-size) * 0.8);
-		height: calc(var(--player-size) * 0.8);
-	}
-
-	.player:active {
-		width: calc(var(--player-size) * 0.8 - (var(--player-size) / 20 * 0.8));
-		height: calc(var(--player-size) * 0.8 - (var(--player-size) / 20 * 0.8));
-	}
-
-	.buildingcounter {
-		width: 100%;
-		left: 0;
-		font-size: calc(var(--button-height) / 1.5);
-		opacity: 0.5;
-		color: #deac2c;
-		font-style: italic;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	.info {
-		padding: calc(var(--score-text-position) / 4);
-	}
-
-	.menu {
-		width: 100%;
-		background: none;
-	}
-
-	.menu button, .buildingcounter {
-		width: var(--menu-width);
-	}
-
-	.menu > div:first-child {
-		display: none;
-	}
-
-	.menu > div {
-		justify-content: left;
-	}
-
-	.menu {
-		background: linear-gradient(90deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.1) 20%, rgba(0,0,0,0) 20.1%);
+	if (amount > 1) {
+		info.innerHTML += '<p>your <em>' + amount + '</em> ' + name.toLowerCase() + 's make <em>' + formatValue(+(amount * perSecond).toFixed(1)) + '</em> points per second</p>\n'
 	}
 }
 
-@media (max-width: 540px) {
-	.score {
-		bottom: 15%;
+
+// auto-clicker
+let autoClickInterval;
+function startInterval(x) {
+	let interval = 1000
+	if (x > 10) {
+		interval = 100
+		x = x / 10 ^ 0
+	} else if (x < 1) {
+		interval = 1000 / x ^ 0
+		x = 1
 	}
 
-	.speed {
-		right: auto;
-	}
-
-	.info {
-		left: var(--menu-width) !important;
-		width: calc(100% - var(--menu-width));
-		padding: calc(var(--score-text-position) / 4);
-	}
+	autoClickInterval = setInterval(() => {
+		score += BigInt(Math.round(x))
+		newScore()
+	}, interval)
 }
 
-@media (max-height: 420px) {
-	.menu {
-		/*height: 100vh;*/
+
+// click handler
+document.addEventListener('click', function(event) {
+	// if clicked on player
+	if (event.target.className == 'player') {
+		score += BigInt(1 + cheat)
+		newScore()
+		addScorePopOut()
 	}
-}
+
+	// if clicked on buldings
+	else for (let i = 0; i < buildings.length; i++) {
+		if (event.target.getAttribute('object') == i) {
+			addBuilding(i)
+			getBuldingInfo(event.target)
+		}
+	}
+})
+
+// mouseover handler
+menu.addEventListener('mouseover', function(event) {
+	if (event.target.className == 'cost') {
+		getBuldingInfo(event.target)
+		info.hidden = false
+	}
+})
+
+menu.addEventListener('mouseout', function(event) {
+	if (event.target.className == 'cost') {
+		info.hidden = true
+		info.innerHTML = ''
+	}
+})
