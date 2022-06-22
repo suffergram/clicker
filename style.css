@@ -12,6 +12,7 @@ body {
 	--button-height: 60px;
 	--score-text-position: 40px;
 	--menu-width: 20%;
+	--menu-bg-color: rgba(0, 0, 0, .1);
 }
 
 *:focus {
@@ -24,7 +25,7 @@ strong {
 
 @keyframes pop {
 	to {
-		margin-bottom: 60vh;
+		margin-bottom: 70vh;
 		opacity: 0;
 	}
 }
@@ -65,19 +66,21 @@ strong {
 .popout {
 	position: fixed;
 	font-size: 25px;
-	margin-bottom: 40vh;
+	margin-bottom: 50vh;
 	animation-name: pop;
 	animation-duration: 1s;
 	animation-timing-function: linear;
 }
 
 .menu {
-	position: fixed;
+	position: absolute;
 	left: 0;
 	width: var(--menu-width);
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.1);
+	height: 100vh;
+	background-color: var(--menu-bg-color);
 	overflow-y: auto;
+	overflow-x: hidden;
+	z-index: 0;
 }
 
 .menu > div {
@@ -99,7 +102,7 @@ strong {
 }
 
 .menu button {
-	position: absolute;
+	position: relative;
 	width: 100%;
 	height: var(--button-height);
 	font-size: var(--button-text-size);
@@ -118,6 +121,7 @@ strong {
 }
 
 .buildingcounter {
+	position: absolute;
 	width: 20%;
 	height: var(--button-height);
 	display: flex;
@@ -134,14 +138,14 @@ strong {
 
 .building {
 	position: absolute;
-	width: 100%;
 	font-size: calc(var(--button-height) / 1.5);
 	opacity: 0.1;
 	font-style: italic;
-	overflow: hidden;
 	white-space: nowrap;
 	left: 0;
-	z-index: 0;
+	height: var(--button-height);
+	overflow-x: visible;
+	z-index: 1;
 }
 
 .info {
@@ -166,10 +170,14 @@ strong {
 	color: #deac2c;
 }
 
-@media (max-width: 420px), (max-height: 420px) {
+.empty {
+	height: var(--button-height);
+	width: var(--menu-width);
+}
+
+@media (max-width: 1050px), (max-height: 420px) {
 	.building {
-		width: calc(100vw * 0.8);
-		left: 100%;
+		left: var(--menu-width);
 	}
 
 	.player {
@@ -185,6 +193,7 @@ strong {
 
 	.buildingcounter {
 		width: 100%;
+		left: 0;
 		font-size: calc(var(--button-height) / 1.5);
 		opacity: 0.5;
 		color: #deac2c;
@@ -198,15 +207,28 @@ strong {
 	}
 
 	.menu {
-		overflow: visible;
+		width: 100%;
+		background: none;
+	}
+
+	.menu button, .buildingcounter {
+		width: var(--menu-width);
 	}
 
 	.menu > div:first-child {
 		display: none;
 	}
+
+	.menu > div {
+		justify-content: left;
+	}
+
+	.menu {
+		background: linear-gradient(90deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.1) 20%, rgba(0,0,0,0) 20.1%);
+	}
 }
 
-@media (max-width: 420px) {
+@media (max-width: 540px) {
 	.score {
 		bottom: 15%;
 	}
@@ -227,4 +249,3 @@ strong {
 		/*height: 100vh;*/
 	}
 }
-
