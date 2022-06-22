@@ -15,20 +15,20 @@ const buildings = [
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 0
+let cheat = 99999999
 
 // upgrades
 // import { upgrades } from 'upgrades.js'
 // console.log(upgrades)
 
-// create building menu
+// make building menu
 let menu = document.createElement('div')
 menu.classList = 'menu'
 container.append(menu)
 menu.append(document.createElement('div'))
 menu.children[0].textContent = 'OBJECTS'
 
-// create buildings
+// make buildings
 for (let x = 0; x < buildings.length; x++) {
 	buildings[x][3] = buildings[x][0]
 	menu.append(document.createElement('div'))
@@ -38,7 +38,6 @@ for (let x = 0; x < buildings.length; x++) {
 	building.textContent = buildings[x][1]
 
 	let buildingCost = document.createElement('button')
-	// buildingCost.id = x
 	buildingCost.setAttribute('object', x)
 	buildingCost.classList = 'cost'
 	buildingCost.textContent = getNewValue(x)
@@ -50,28 +49,33 @@ for (let x = 0; x < buildings.length; x++) {
 	menu.children[x + 1].append(buildingCost, buildingCounter, building)
 }
 
+// make empty space after all buildings
+let emptyDiv = document.createElement('div')
+emptyDiv.classList = 'empty'
+menu.append(emptyDiv)
+
 let buildingsList = document.querySelectorAll('.cost')
 let buildingCountersList = document.querySelectorAll('.buildingcounter')
 
-//create info section
+// make info section
 let info = document.createElement('div')
 info.classList = 'info'
 info.textContent = ''
 info.hidden = true
 container.append(info)
 
-// create player with .player class
+// make player with .player class
 let player = document.createElement('div')
 player.classList = 'player'
 container.append(player)
 
-// create score counter with .score class
+// make score counter with .score class
 let scoreText = document.createElement('div')
 scoreText.classList = 'score'
 scoreText.textContent = ''
 container.append(scoreText)
 
-// create speed metric
+// make speed metric
 let speedText = document.createElement('div')
 speedText.classList = 'speed'
 speedText.textContent = ''
@@ -210,4 +214,3 @@ menu.addEventListener('mouseout', function(event) {
 		info.innerHTML = ''
 	}
 })
-
