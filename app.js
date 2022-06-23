@@ -12,10 +12,40 @@ const buildings = [
 	[75000000000, 'GALAXY', 1600000],
 ]
 
+const upgrades = []
+const upgradeRates = [
+	10, 
+	50, 
+	500, 
+	50000, 
+	5000000, 
+	500000000, 
+	500000000000, 
+	500000000000000, 
+	500000000000000000, 
+	500000000000000000000
+]
+const upgradeBuffer = []
+
+let upgradeId = 0
+for (let item of buildings) {
+	for (let rate of upgradeRates) {
+		let upgrade = []
+		upgrade.push(upgradeId)
+		upgrade.push(item[0] * rate)
+		upgrade.push(item[1])
+		upgrade.push(`${item[1].slice(0, 1) + item[1].slice(1).toLowerCase()}s are twice efficient.\n`)
+		upgrades.push(upgrade)
+		upgradeId ++
+	}
+}
+
 const ratio = 1.15
 let scoreIndex = 0
 let newInterval = 0
-let cheat = 0
+let currentUpgradeId
+let currentUpgradeName
+let cheat = 999999
 
 // make building menu
 let menu = document.createElement('div')
@@ -50,8 +80,16 @@ let emptyDiv = document.createElement('div')
 emptyDiv.classList = 'empty'
 menu.append(emptyDiv)
 
+
 let buildingsList = document.querySelectorAll('.cost')
 let buildingCountersList = document.querySelectorAll('.buildingcounter')
+let buildingNamesList = document.querySelectorAll('.building')
+
+
+// make upgrades section
+let upgradeContainer = document.createElement('div')
+upgradeContainer.classList = 'upgrades'
+container.append(upgradeContainer)
 
 // make info section
 let info = document.createElement('div')
@@ -157,6 +195,39 @@ function getBuldingInfo(x) {
 	}
 }
 
+function doUpgrade() {
+	
+}
+
+function showUpgrade(arr) {
+	let newUpgrade = document.createElement('div')
+	newUpgrade.classList = 'upgrade'
+	newUpgrade.innerHTML = arr[2].slice(0, 3) + '++'
+	newUpgrade.setAttribute('upgradeid', arr[0])
+	upgradeContainer.append(newUpgrade)
+}
+
+function updateUpgradeContainer() {
+	upgradeContainer.innerHTML = ''
+	for (item of upgradeBuffer) {
+		showUpgrade(item)
+	}
+}
+
+// check for available upgrades
+function checkForUpgrade() {
+	for (let i = 0; i < upgrades.length; i++) {
+		if (score >= upgrades[i][1]) {
+			upgradeBuffer.push(upgrades[i])
+			upgrades.splice(i, 1)
+			updateUpgradeContainer()
+		}
+	}
+}
+
+// interval for autocheck every 1s
+setInterval(checkForUpgrade, 1000)
+
 
 // auto-clicker
 let autoClickInterval;
@@ -186,6 +257,15 @@ document.addEventListener('click', function(event) {
 		addScorePopOut()
 	}
 
+	// if clicked on upgrades
+	else if (event.target.className == 'upgrade') {
+		event.target.remove()
+		for (let item of buildingNamesList) {
+			item.style.opacity = null
+		}
+		doUpgrade()
+	}
+
 	// if clicked on buldings
 	else for (let i = 0; i < buildings.length; i++) {
 		if (event.target.getAttribute('object') == i) {
@@ -196,17 +276,39 @@ document.addEventListener('click', function(event) {
 })
 
 // mouseover handler
-menu.addEventListener('mouseover', function(event) {
+document.addEventListener('mouseover', function(event) {
 	if (event.target.className == 'cost') {
 		getBuldingInfo(event.target)
 		info.hidden = false
 	}
+
+	if (event.target.className == 'upgrade') {
+		currentUpgradeId = event.target.getAttribute('upgradeid')
+		for (let item of upgradeBuffer) {
+			if (item[0] == currentUpgradeId) {
+				currentUpgradeName = item[2]
+				break;
+			}
+		}
+
+		for (let item of buildingNamesList) {
+			if (item.innerHTML == currentUpgradeName) {
+				item.style.opacity = 0.4
+			}
+		}
+	}
 })
 
-menu.addEventListener('mouseout', function(event) {
+document.addEventListener('mouseout', function(event) {
 	if (event.target.className == 'cost') {
 		info.hidden = true
 		info.innerHTML = ''
+	}
+
+	if (event.target.className == 'upgrade') {
+		for (let item of buildingNamesList) {
+			item.style.opacity = null
+		}
 	}
 })
 
