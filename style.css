@@ -97,7 +97,7 @@ strong {
 	justify-content: center;
 }
 
-.menu button:hover {
+.menu button:hover, .upgrade:hover {
 	background-color: rgba(255,255,255, 0.05);
 }
 
@@ -143,7 +143,6 @@ strong {
 	font-style: italic;
 	white-space: nowrap;
 	left: 0;
-	height: var(--button-height);
 	overflow-x: visible;
 	z-index: 1;
 }
@@ -174,6 +173,38 @@ strong {
 	height: var(--button-height);
 	width: var(--menu-width);
 }
+
+.upgrades {
+	width: calc(var(--button-height) * 3);
+	position: fixed;
+	top: 0;
+	right: 0;
+	border-left: 1px solid rgba(255, 255, 255, .1);
+	display: grid;
+	grid-template-columns: 33% 34% 33%;
+	grid-template-rows: auto;
+}
+
+.upgrade {
+	height: var(--button-height);
+	background-color: var(--menu-bg-color);
+	font-stretch: condensed;
+	font-style: italic;
+	border-right: 1px solid rgba(255, 255, 255, .1);
+	border-bottom: 1px solid rgba(255, 255, 255, .1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	font-size: var(--button-text-size);
+}
+
+
+
+
+
+
+
 
 @media (max-width: 1050px), (max-height: 420px) {
 	.building {
