@@ -50,7 +50,7 @@ let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
 let mouseClick = 1
-let cheat = 999999999
+let cheat = 0
 
 // make building menu
 let menu = document.createElement('div')
