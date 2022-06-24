@@ -34,7 +34,11 @@ for (let item of buildings) {
 		upgrade.push(upgradeId)
 		upgrade.push(item[0] * rate)
 		upgrade.push(item[1])
-		upgrade.push(`${item[1].slice(0, 1) + item[1].slice(1).toLowerCase()}s are twice efficient.\n`)
+		let description = item[1].slice(0, 1) + item[1].slice(1).toLowerCase() + 's are <em>twice</em> efficient.'
+		if (item[1] == buildings[0][1]) {
+			description += '<br>The mouse is <em>twice</em> efficient.'
+		}
+		upgrade.push(description)
 		upgrades.push(upgrade)
 		upgradeId ++
 	}
@@ -45,7 +49,8 @@ let scoreIndex = 0
 let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
-let cheat = 999999
+let mouseClick = 1
+let cheat = 999999999
 
 // make building menu
 let menu = document.createElement('div')
@@ -80,6 +85,11 @@ let emptyDiv = document.createElement('div')
 emptyDiv.classList = 'empty'
 menu.append(emptyDiv)
 
+// add upgrade rate to buildings
+for (let item of buildings) {
+	item.push(0)
+}
+
 
 let buildingsList = document.querySelectorAll('.cost')
 let buildingCountersList = document.querySelectorAll('.buildingcounter')
@@ -87,9 +97,14 @@ let buildingNamesList = document.querySelectorAll('.building')
 
 
 // make upgrades section
+let upgradeMenu = document.createElement('div')
+upgradeMenu.classList = 'upgrademenu'
+upgradeMenu.hidden = true
+container.append(upgradeMenu)
 let upgradeContainer = document.createElement('div')
 upgradeContainer.classList = 'upgrades'
-container.append(upgradeContainer)
+upgradeMenu.append(document.createElement('div'), upgradeContainer)
+upgradeMenu.firstChild.innerHTML = 'UPGRADES'
 
 // make info section
 let info = document.createElement('div')
@@ -124,7 +139,18 @@ function newScore() {
 }
 
 function newSpeed() {
+	scoreIndex = 0
+	for (let i = 0; i < buildings.length; i++) {
+		scoreIndex += buildings[i][2] * +buildingCountersList[i].innerHTML
+	}
+	scoreIndex = +scoreIndex.toFixed(1)
+	if (scoreIndex == 0) return
 	speedText.innerHTML = '<strong>' + formatValue(scoreIndex) + '</strong> points per second'
+
+	// create new interval
+	newInterval = 10000 / scoreIndex / 10
+	clearInterval(autoClickInterval)
+	startInterval(scoreIndex)
 }
 
 function getNewValue(x, y = 3) {
@@ -134,21 +160,38 @@ function getNewValue(x, y = 3) {
 }
 
 function formatValue(x) {
-	if (x > Number.MAX_SAFE_INTEGER) return x
-		x = Number(x)
-		 if (x >= 10 ** 21) x = (x / 10 ** 21).toFixed(3) + 'S'
-	else if (x >= 10 ** 18) x = (x / 10 ** 18).toFixed(3) + 'Q'
-	else if (x >= 10 ** 15) x = (x / 10 ** 15).toFixed(3) + 'q'
-	else if (x >= 10 ** 12) x = (x / 10 ** 12).toFixed(3) + 'T'
-	else if (x >= 10 ** 9 ) x = (x / 10 ** 9 ).toFixed(3) + 'B'
-	else if (x >= 10 ** 6 ) x = (x / 10 ** 6 ).toFixed(3) + 'M'
-	return x
+	let format = {
+		7:  'M',
+		10: 'B',
+		13: 'T',
+		16: 'q',
+		19: 'Q',
+		22: 's',
+		25: 'S',
+		28: 'O',
+		31: 'N',
+		34: 'D',
+		37: 'U',
+	}
+	let initial = String(x)
+	let formated = ''
+	if (initial.length <= 6) return initial
+	while (initial.length > 0) {
+		for (let item of Object.keys(format)) {
+			if (initial.length == item) {
+				formated += initial.slice(0, 1) + '.' + initial.slice(1, 4) + format[item]
+				return formated
+			}
+		}
+		formated += initial.slice(0, 1)
+		initial = initial.slice(1)
+	}
 }
 
 function addScorePopOut() {
 	let popOut = document.createElement('div')
 	popOut.classList = 'popout'
-	popOut.textContent = '+' + formatValue(1 + cheat)
+	popOut.textContent = '+' + formatValue(mouseClick + cheat)
 	container.append(popOut)
 	setInterval(() => popOut.remove(), 1000)
 }
@@ -162,12 +205,6 @@ function addBuilding(x) {
 		let count = +buildingCountersList[x].textContent + 1
 		buildingCountersList[x].textContent = count
 
-		// create new interval
-		scoreIndex += buildings[x][2]
-		scoreIndex = +scoreIndex.toFixed(1)
-		newInterval = 10000 / scoreIndex / 10
-		clearInterval(autoClickInterval)
-		startInterval(scoreIndex)
 		newSpeed()
 
 		// change value of building x
@@ -185,6 +222,7 @@ function getBuldingInfo(x) {
 
 	info.style.top = xCoord.top + 'px'
 	info.style.left = xCoord.right + 10 + 'px'
+	info.style.right = null
 
 	info.innerHTML = '<p>' + name + '</p>\n'
 	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
@@ -195,14 +233,61 @@ function getBuldingInfo(x) {
 	}
 }
 
-function doUpgrade() {
-	
+function getUpgradeInfo(x) {
+	let description = ''
+	let xCoord = x.getBoundingClientRect()
+	let xWidth = +window.getComputedStyle(upgradeMenu).width.slice(0, -2)
+
+	for (item of upgradeBuffer) {
+		if (item[0] == currentUpgradeId) {
+			description = item[3]
+			break
+		}
+	}
+
+	info.style.top = xCoord.top + 'px'
+	info.style.left = null
+	info.style.right = xWidth + 10 + 'px'
+
+	info.innerHTML = '<p>' + currentUpgradeName + '++</p>'
+	info.innerHTML += '<p>' + description + '</p>'
+}
+
+function doUpgrade(event) {
+	for (let i = 0; i < upgradeBuffer.length; i++) {
+		if (upgradeBuffer[i][0] == currentUpgradeId) {
+			if (upgradeBuffer[i][1] <= score) {
+				score -= BigInt(upgradeBuffer[i][1])
+				newScore()
+
+				for (let item of buildings) {
+					if (item[1] == currentUpgradeName) {
+						item[2] *=2
+					}
+				}
+				
+				if (currentUpgradeName == buildings[0][1]) mouseClick *=2
+
+				newSpeed()
+				event.target.remove()
+				info.hidden = true
+				upgradeBuffer.splice(i, 1)
+				
+				break;
+			}
+		}
+	}
+
+	if (upgradeBuffer.length == 0) {
+		setTimeout(() => upgradeMenu.hidden = !upgradeMenu.hidden, 1000)
+	}
 }
 
 function showUpgrade(arr) {
+	if (upgradeMenu.hidden) upgradeMenu.hidden = !upgradeMenu.hidden
 	let newUpgrade = document.createElement('div')
 	newUpgrade.classList = 'upgrade'
-	newUpgrade.innerHTML = arr[2].slice(0, 3) + '++'
+	newUpgrade.innerHTML = arr[2].slice(0, 3) + '++\n' + formatValue(arr[1])
 	newUpgrade.setAttribute('upgradeid', arr[0])
 	upgradeContainer.append(newUpgrade)
 }
@@ -252,18 +337,17 @@ function startInterval(x) {
 document.addEventListener('click', function(event) {
 	// if clicked on player
 	if (event.target.className == 'player') {
-		score += BigInt(1 + cheat)
+		score += BigInt(mouseClick + cheat)
 		newScore()
 		addScorePopOut()
 	}
 
 	// if clicked on upgrades
 	else if (event.target.className == 'upgrade') {
-		event.target.remove()
+		doUpgrade(event)
 		for (let item of buildingNamesList) {
 			item.style.opacity = null
 		}
-		doUpgrade()
 	}
 
 	// if clicked on buldings
@@ -296,6 +380,9 @@ document.addEventListener('mouseover', function(event) {
 				item.style.opacity = 0.4
 			}
 		}
+
+		getUpgradeInfo(event.target)
+		info.hidden = false
 	}
 })
 
@@ -308,6 +395,8 @@ document.addEventListener('mouseout', function(event) {
 	if (event.target.className == 'upgrade') {
 		for (let item of buildingNamesList) {
 			item.style.opacity = null
+			info.hidden = true
+			info.innerHTML = ''
 		}
 	}
 })
