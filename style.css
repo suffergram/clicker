@@ -175,14 +175,29 @@ strong {
 }
 
 .upgrades {
-	width: calc(var(--button-height) * 3);
-	position: fixed;
-	top: 0;
-	right: 0;
-	border-left: 1px solid rgba(255, 255, 255, .1);
 	display: grid;
 	grid-template-columns: 33% 34% 33%;
 	grid-template-rows: auto;
+	max-height: 80vh;
+	overflow-y: hidden;
+}
+
+.upgrademenu {
+	width: calc(var(--button-height) * 3);
+	position: absolute;
+	top: 0;
+	right: 0;
+	border-left: 1px solid rgba(255, 255, 255, .1);
+}
+
+.upgrademenu > div:first-child {
+	height: var(--button-height);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--menu-bg-color);
+	border-bottom: 1px solid rgba(255, 255, 255, .1);
+	font-size: calc(var(--button-height) / 2.5);
 }
 
 .upgrade {
@@ -193,16 +208,11 @@ strong {
 	border-right: 1px solid rgba(255, 255, 255, .1);
 	border-bottom: 1px solid rgba(255, 255, 255, .1);
 	display: flex;
-	justify-content: center;
 	align-items: center;
 	cursor: pointer;
 	font-size: var(--button-text-size);
+	text-align: center;
 }
-
-
-
-
-
 
 
 
