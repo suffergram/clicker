@@ -11,8 +11,14 @@ function check() {
 	}
 }
 
+function autoclick() {
+	for (let i = 0, i < 10; i++) {
+		cookie.click()
+	}
+}
+
 setInterval(check, 1000)
 
-setInterval(() => cookie.click(), 10)
+setInterval(autoclick, 10)
 
 
