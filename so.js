@@ -5,6 +5,6 @@ function check() {
 	else console.log('there ARE shimmer!!!')
 }
 
-setTimer(check, 100)
+setInterval(check, 1000)
 
 
