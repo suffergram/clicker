@@ -1,4 +1,5 @@
 let shimmers = document.querySelector('#shimmers')
+let cookie = document.querySelector('#bigCookie')
 
 function check() {
 	if (shimmers.children.length == 0) return
@@ -10,6 +11,11 @@ function check() {
 	}
 }
 
+function autoClick() {
+	cookie.click()
+}
+
 setInterval(check, 1000)
+setInterval(autoClick, 10)
 
 
