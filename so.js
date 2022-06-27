@@ -12,7 +12,7 @@ function check() {
 }
 
 function autoclick() {
-	for (let ii = 0, ii < 50; ii++) {
+	for (let i = 0; i < 50; i++) {
 		cookie.click()
 	}
 }
