@@ -9,10 +9,12 @@ function check() {
 			item.click()
 		}
 	}
+	let fortune = document.querySelector('.fortune')
+	if (!!fortune) fortune.click()
 }
 
-setInterval(check, 1000)
+setInterval(check, 500)
 
-setInterval(() => cookie.click(), 4)
+setInterval(() => cookie.click(), 10)
 
 
