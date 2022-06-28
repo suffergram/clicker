@@ -45,12 +45,13 @@ for (let item of buildings) {
 }
 
 const ratio = 1.15
+let score = 0n
 let scoreIndex = 0
 let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
 let mouseClick = 1
-let cheat = 0
+let cheat = 9
 
 // make building menu
 let menu = document.createElement('div')
@@ -129,8 +130,6 @@ let speedText = document.createElement('div')
 speedText.classList = 'speed'
 speedText.textContent = ''
 container.append(speedText)
-
-let score = 0n
 
 
 // functions
@@ -219,12 +218,17 @@ function getBuldingInfo(x) {
 	let amount = x.parentNode.querySelector('.buildingcounter').innerHTML
 	let currentCost = getNewValue(+x.getAttribute('object'))
 	let xCoord = x.getBoundingClientRect()
+	let rate = ''
+
+	for (let item of buildings) {
+		if (item[1] == name && item[4] != 0) rate = ' +' + item[4]
+	}
 
 	info.style.top = xCoord.top + 'px'
 	info.style.left = xCoord.right + 10 + 'px'
 	info.style.right = null
 
-	info.innerHTML = '<p>' + name + '</p>\n'
+	info.innerHTML = '<p>' + name + rate + '</p>\n'
 	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
 	info.innerHTML += '<p>and currently costs <em>' + currentCost + '</em></p>\n'
 
@@ -262,7 +266,8 @@ function doUpgrade(event) {
 
 				for (let item of buildings) {
 					if (item[1] == currentUpgradeName) {
-						item[2] *=2
+						item[2] *=2 						// new speed
+						item[4] +=1 						// new rate
 					}
 				}
 				
@@ -272,7 +277,6 @@ function doUpgrade(event) {
 				event.target.remove()
 				info.hidden = true
 				upgradeBuffer.splice(i, 1)
-				
 				break;
 			}
 		}
@@ -302,7 +306,7 @@ function updateUpgradeContainer() {
 // check for available upgrades
 function checkForUpgrade() {
 	for (let i = 0; i < upgrades.length; i++) {
-		if (score >= upgrades[i][1]) {
+		if (score >= upgrades[i][1] / 1.5) {
 			upgradeBuffer.push(upgrades[i])
 			upgrades.splice(i, 1)
 			updateUpgradeContainer()
@@ -310,8 +314,14 @@ function checkForUpgrade() {
 	}
 }
 
-// interval for autocheck every 1s
-setInterval(checkForUpgrade, 1000)
+function checkForAvailability(item) {
+	if (score < item) {
+		
+	}
+}
+
+// interval for autocheck every .5s
+setInterval(checkForUpgrade, 500)
 
 
 // auto-clicker
