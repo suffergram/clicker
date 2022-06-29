@@ -51,7 +51,7 @@ let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
 let mouseClick = 1
-let cheat = 9
+let cheat = 99999
 
 // make building menu
 let menu = document.createElement('div')
@@ -95,6 +95,7 @@ for (let item of buildings) {
 let buildingsList = document.querySelectorAll('.cost')
 let buildingCountersList = document.querySelectorAll('.buildingcounter')
 let buildingNamesList = document.querySelectorAll('.building')
+checkForAvailability()
 
 
 // make upgrades section
@@ -221,7 +222,7 @@ function getBuldingInfo(x) {
 	let rate = ''
 
 	for (let item of buildings) {
-		if (item[1] == name && item[4] != 0) rate = ' +' + item[4]
+		if (item[1] == name && item[4] != 0) rate = '+' + item[4]
 	}
 
 	info.style.top = xCoord.top + 'px'
@@ -255,9 +256,11 @@ function getUpgradeInfo(x) {
 
 	info.innerHTML = '<p>' + currentUpgradeName + '++</p>'
 	info.innerHTML += '<p>' + description + '</p>'
+
+	console.log(info.style.top + ' ' + info.style.right)
 }
 
-function doUpgrade(event) {
+function doUpgrade(element) {
 	for (let i = 0; i < upgradeBuffer.length; i++) {
 		if (upgradeBuffer[i][0] == currentUpgradeId) {
 			if (upgradeBuffer[i][1] <= score) {
@@ -274,7 +277,7 @@ function doUpgrade(event) {
 				if (currentUpgradeName == buildings[0][1]) mouseClick *=2
 
 				newSpeed()
-				event.target.remove()
+				element.remove()
 				info.hidden = true
 				upgradeBuffer.splice(i, 1)
 				break;
@@ -312,11 +315,40 @@ function checkForUpgrade() {
 			updateUpgradeContainer()
 		}
 	}
+	checkForAvailability()
 }
 
-function checkForAvailability(item) {
-	if (score < item) {
-		
+function checkForAvailability() {
+	let color = 'gray'
+	for (let item of buildings) {
+		if (item[3] > score) {
+			for (let desired of buildingNamesList) {
+				if (desired.innerHTML == item[1]) {
+					desired.parentNode.style.color = color
+					desired.parentNode.firstChild.style.color = color
+				}
+			}
+		} else {
+			for (let desired of buildingNamesList) {
+				if (desired.innerHTML == item[1]) {
+					desired.parentNode.style.color = null
+					desired.parentNode.firstChild.style.color = null
+				}
+			}
+		}
+	}
+
+	let currentUpgrades = document.querySelectorAll('.upgrade')
+	for (let item of upgradeBuffer) {
+		if (item[1] > score) {
+			for (let desired of currentUpgrades) {
+				if (desired.getAttribute('upgradeid') == item[0]) desired.style.color = color
+			}
+		} else {
+			for (let desired of currentUpgrades) {
+				if (desired.getAttribute('upgradeid') == item[0]) desired.style.color = null
+			}
+		}
 	}
 }
 
@@ -354,7 +386,7 @@ document.addEventListener('click', function(event) {
 
 	// if clicked on upgrades
 	else if (event.target.className == 'upgrade') {
-		doUpgrade(event)
+		doUpgrade(event.target)
 		for (let item of buildingNamesList) {
 			item.style.opacity = null
 		}
@@ -367,13 +399,15 @@ document.addEventListener('click', function(event) {
 			getBuldingInfo(event.target)
 		}
 	}
+
+	checkForAvailability()
 })
 
 // mouseover handler
 document.addEventListener('mouseover', function(event) {
 	if (event.target.className == 'cost') {
 		getBuldingInfo(event.target)
-		info.hidden = false
+		info.hidden = !info.hidden
 	}
 
 	if (event.target.className == 'upgrade') {
@@ -392,22 +426,22 @@ document.addEventListener('mouseover', function(event) {
 		}
 
 		getUpgradeInfo(event.target)
-		info.hidden = false
+		info.hidden = !info.hidden
 	}
 })
 
 document.addEventListener('mouseout', function(event) {
 	if (event.target.className == 'cost') {
-		info.hidden = true
+		info.hidden = !info.hidden
 		info.innerHTML = ''
 	}
 
 	if (event.target.className == 'upgrade') {
 		for (let item of buildingNamesList) {
 			item.style.opacity = null
-			info.hidden = true
-			info.innerHTML = ''
 		}
+		info.innerHTML = ''
+		info.hidden = !info.hidden
 	}
 })
 
