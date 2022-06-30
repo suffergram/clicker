@@ -216,6 +216,23 @@ strong {
 	z-index: 101;
 }
 
+.test {
+	position: absolute;
+	top: 0;
+	left: var(--menu-width);
+	margin: calc(var(--button-height) / 4);
+	height: calc(var(--button-height) / 2);
+	width: calc(var(--menu-width) * 1.2);
+	font-size: calc(var(--button-height) / 2);
+	border: 0;
+	background: rgba(0, 0, 0, .1);
+	color: var(--text-color);
+}
+
+.test::before {
+	content: '1 + ';
+}
+
 
 
 @media (max-width: 1050px), (max-height: 420px) {
