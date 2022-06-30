@@ -51,7 +51,7 @@ let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
 let mouseClick = 1
-let cheat = 99999
+let cheat = 0
 
 // make building menu
 let menu = document.createElement('div')
@@ -319,7 +319,7 @@ function checkForUpgrade() {
 }
 
 function checkForAvailability() {
-	let color = 'gray'
+	let color = 'LightSlateGray'
 	for (let item of buildings) {
 		if (item[3] > score) {
 			for (let desired of buildingNamesList) {
