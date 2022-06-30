@@ -144,6 +144,7 @@ strong {
 	white-space: nowrap;
 	left: 0;
 	overflow-x: visible;
+	color: var(--text-color);
 	z-index: 1;
 }
 
@@ -242,7 +243,6 @@ strong {
 		font-style: italic;
 		overflow: hidden;
 		white-space: nowrap;
-		/*direction: rtl;*/
 	}
 
 	.info {
@@ -252,6 +252,7 @@ strong {
 	.menu {
 		width: 100%;
 		background: none;
+		direction: rtl;
 	}
 
 	.menu button, .buildingcounter {
@@ -278,9 +279,7 @@ strong {
 	.upgrademenu {
 		width: var(--button-height);
 	}
-}
 
-@media (max-width: 540px) {
 	.score {
 		bottom: 15%;
 	}
@@ -288,7 +287,9 @@ strong {
 	.speed {
 		right: auto;
 	}
+}
 
+@media (max-width: 540px) {
 	.info {
 		left: var(--menu-width) !important;
 		width: calc(100% - var(--menu-width) - var(--button-height) - 1px);
@@ -297,10 +298,14 @@ strong {
 	}
 }
 
-@media (max-height: 280px) {
+@media (max-height: 360px) {
 	.score {
-		right: var(--score-text-position);
+		right: calc(var(--score-text-position) * 2);
 		bottom: calc(var(--score-text-position) * 2);
+	}
+
+	.speed {
+		right: calc(var(--score-text-position) * 2);
 	}
 
 	.popout {
