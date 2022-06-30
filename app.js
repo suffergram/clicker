@@ -1,3 +1,15 @@
+const ratio = 1.15
+let score = 0n
+let scoreIndex = 0
+let scoreMultiplier = 1
+let mouseMultiplier = 1
+let newInterval = 0
+let currentUpgradeId
+let currentUpgradeName
+let mouseClick = 1
+let speedName = 'pps'
+let cheat = 0
+
 // buildings
 const buildings = [
 	[15, 'GRAIN', 0.1],
@@ -44,14 +56,18 @@ for (let item of buildings) {
 	}
 }
 
-const ratio = 1.15
-let score = 0n
-let scoreIndex = 0
-let newInterval = 0
-let currentUpgradeId
-let currentUpgradeName
-let mouseClick = 1
-let cheat = 0
+let ppsUpdateName = 'NEW MOON'
+let ppsUpdateMultiplier = 3
+for (let rate of upgradeRates) {
+	let upgrade = []
+	upgrade.push(upgradeId)
+	upgrade.push(10000 * rate)
+	upgrade.push(ppsUpdateName)
+	let description = 'Multiplies your current ' + speedName + ' by <em>' + ppsUpdateMultiplier + '</em>'
+	upgrade.push(description)
+	upgrades.push(upgrade)
+	upgradeId ++
+}
 
 // make building menu
 let menu = document.createElement('div')
@@ -143,9 +159,10 @@ function newSpeed() {
 	for (let i = 0; i < buildings.length; i++) {
 		scoreIndex += buildings[i][2] * +buildingCountersList[i].innerHTML
 	}
+	scoreIndex *= scoreMultiplier
 	scoreIndex = +scoreIndex.toFixed(1)
 	if (scoreIndex == 0) return
-	speedText.innerHTML = '<strong>' + formatValue(scoreIndex) + '</strong> points per second'
+	speedText.innerHTML = '<strong>' + formatValue(scoreIndex) + '</strong> ' + speedName
 
 	// create new interval
 	newInterval = 10000 / scoreIndex / 10
@@ -191,7 +208,7 @@ function formatValue(x) {
 function addScorePopOut() {
 	let popOut = document.createElement('div')
 	popOut.classList = 'popout'
-	popOut.textContent = '+' + formatValue(mouseClick + cheat)
+	popOut.textContent = '+' + formatValue(mouseMultiplier * (mouseClick + parseInt(scoreIndex * 0.1)) + cheat)
 	container.append(popOut)
 	setInterval(() => popOut.remove(), 1000)
 }
@@ -230,11 +247,11 @@ function getBuldingInfo(x) {
 	info.style.right = null
 
 	info.innerHTML = '<p>' + name + rate + '</p>\n'
-	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> points per second</p>\n'
+	info.innerHTML += '<p>one <em>' + name.toLowerCase() + '</em> makes <em>' + formatValue(perSecond) + '</em> ' + speedName + '</p>\n'
 	info.innerHTML += '<p>and currently costs <em>' + currentCost + '</em></p>\n'
 
 	if (amount > 1) {
-		info.innerHTML += '<p>your <em>' + amount + '</em> ' + name.toLowerCase() + 's make <em>' + formatValue(+(amount * perSecond).toFixed(1)) + '</em> points per second</p>\n'
+		info.innerHTML += '<p>your <em>' + amount + '</em> ' + name.toLowerCase() + 's make <em>' + formatValue(+(amount * perSecond).toFixed(1)) + '</em> ' + speedName + '</p>\n'
 	}
 }
 
@@ -256,8 +273,6 @@ function getUpgradeInfo(x) {
 
 	info.innerHTML = '<p>' + currentUpgradeName + '++</p>'
 	info.innerHTML += '<p>' + description + '</p>'
-
-	console.log(info.style.top + ' ' + info.style.right)
 }
 
 function doUpgrade(element) {
@@ -273,8 +288,10 @@ function doUpgrade(element) {
 						item[4] +=1 						// new rate
 					}
 				}
-				
-				if (currentUpgradeName == buildings[0][1]) mouseClick *=2
+
+				if (currentUpgradeName == ppsUpdateName) scoreMultiplier *= ppsUpdateMultiplier
+
+				if (currentUpgradeName == buildings[0][1]) mouseMultiplier *=2
 
 				newSpeed()
 				element.remove()
@@ -293,8 +310,10 @@ function doUpgrade(element) {
 function showUpgrade(arr) {
 	if (upgradeMenu.hidden) upgradeMenu.hidden = !upgradeMenu.hidden
 	let newUpgrade = document.createElement('div')
+	let newUpgradeName = arr[2] == ppsUpdateName ? arr[2].slice(3) : arr[2].slice(0, 3) + '++'
+	newUpgradeName = newUpgradeName.toUpperCase()
 	newUpgrade.classList = 'upgrade'
-	newUpgrade.innerHTML = arr[2].slice(0, 3) + '++\n' + formatValue(arr[1])
+	newUpgrade.innerHTML = newUpgradeName + '\n' + formatValue(arr[1])
 	newUpgrade.setAttribute('upgradeid', arr[0])
 	upgradeContainer.append(newUpgrade)
 }
@@ -379,7 +398,7 @@ function startInterval(x) {
 document.addEventListener('click', function(event) {
 	// if clicked on player
 	if (event.target.className == 'player') {
-		score += BigInt(mouseClick + cheat)
+		score += BigInt(mouseClick + parseInt(scoreIndex * 0.1) + cheat)
 		newScore()
 		addScorePopOut()
 	}
