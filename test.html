@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Clicker</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id='container'></div>
+	<script src="app.js"></script>
+	<script>
+		let input = document.createElement('input')
+		input.classList = 'test'
+		input.setAttribute('type', 'text')
+		input.setAttribute('maxlength', 15)
+		container.append(input)
+
+		input.addEventListener('input', updateValue)
+
+		function updateValue(e) {
+			let regex = /[^0-9\-]/gi
+			input.value = input.value.replace(regex, '')
+			cheat = +e.target.value
+		}
+	</script>
+</body>
+</html>
