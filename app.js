@@ -7,7 +7,8 @@ let newInterval = 0
 let currentUpgradeId
 let currentUpgradeName
 let mouseClick = 1
-let speedName = 'pps'
+let speedName = 'points per second'
+let ppsUpdateMultiplier = 2
 let cheat = 0
 
 // buildings
@@ -57,7 +58,7 @@ for (let item of buildings) {
 }
 
 let ppsUpdateName = 'NEW MOON'
-let ppsUpdateMultiplier = 3
+
 for (let rate of upgradeRates) {
 	let upgrade = []
 	upgrade.push(upgradeId)
@@ -147,6 +148,11 @@ let speedText = document.createElement('div')
 speedText.classList = 'speed'
 speedText.textContent = ''
 container.append(speedText)
+
+// make filed of particles
+let particles = document.createElement('div')
+particles.classList = 'particles'
+container.append(particles)
 
 
 // functions
@@ -275,6 +281,8 @@ function getUpgradeInfo(x) {
 	info.innerHTML += '<p>' + description + '</p>'
 }
 
+let moonDistance = 100
+
 function doUpgrade(element) {
 	for (let i = 0; i < upgradeBuffer.length; i++) {
 		if (upgradeBuffer[i][0] == currentUpgradeId) {
@@ -289,7 +297,11 @@ function doUpgrade(element) {
 					}
 				}
 
-				if (currentUpgradeName == ppsUpdateName) scoreMultiplier *= ppsUpdateMultiplier
+				if (currentUpgradeName == ppsUpdateName) {
+					scoreMultiplier *= ppsUpdateMultiplier
+					addMoon(moonDistance)
+					moonDistance += Math.floor(Math.random() * 100) + 50
+				}
 
 				if (currentUpgradeName == buildings[0][1]) mouseMultiplier *=2
 
@@ -371,6 +383,26 @@ function checkForAvailability() {
 	}
 }
 
+function addMoon(distance, speed = +(Math.random() * 0.5 + 1.5).toFixed(2)) {
+	let orbitSize = distance + +window.getComputedStyle(player).width.slice(0, -2)
+	let orbitSpeed = orbitSize / (speed * 2)
+	let moonColor = '#' + ('0' + Math.floor(Math.random() * 16777215).toString(16)).slice(-6)
+
+	let orbit = document.createElement('div')
+	orbit.classList = 'orbit'
+	orbit.style.width = orbitSize + 'px'
+	orbit.style.height = orbitSize + 'px'
+	orbit.style.animationDuration = orbitSpeed + 's';
+	particles.prepend(orbit)
+	let moon = document.createElement('moon')
+	moon.classList = 'moon'
+	moon.style.backgroundColor = moonColor
+	orbit.append(moon)
+
+	console.log('Moon: ' + moonColor + ' ' + 'moon speed: ' + speed)
+	console.log(moonDistance)
+}
+
 // interval for autocheck every .5s
 setInterval(checkForUpgrade, 500)
 
@@ -447,6 +479,11 @@ document.addEventListener('mouseover', function(event) {
 		getUpgradeInfo(event.target)
 		info.hidden = !info.hidden
 	}
+
+	if (event.target.className == 'moon') {
+		event.target.parentNode.style.border = '1px solid rgba(222, 172, 44, .5)'
+		event.target.style.boxShadow = '0 0 5px #deac2c'
+	}
 })
 
 document.addEventListener('mouseout', function(event) {
@@ -461,6 +498,11 @@ document.addEventListener('mouseout', function(event) {
 		}
 		info.innerHTML = ''
 		info.hidden = !info.hidden
+	}
+
+	if (event.target.className == 'moon') {
+		event.target.parentNode.style.border = null
+		event.target.style.boxShadow = null
 	}
 })
 
