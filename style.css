@@ -30,6 +30,11 @@ strong {
 	}
 }
 
+@keyframes orbit {
+	from { transform: rotate(0deg) }
+	to { transform: rotate(-360deg) }
+}
+
 #container {
 	width: 100%;
 	height: 100vh;
@@ -80,7 +85,8 @@ strong {
 	background-color: var(--menu-bg-color);
 	overflow-y: auto;
 	overflow-x: hidden;
-	z-index: 0;
+	backdrop-filter: blur(5px);
+	z-index: 10;
 }
 
 .menu > div {
@@ -145,7 +151,7 @@ strong {
 	left: 0;
 	overflow-x: visible;
 	color: var(--text-color);
-	z-index: 1;
+	z-index: 10;
 }
 
 .info {
@@ -189,6 +195,8 @@ strong {
 	top: 0;
 	right: 0;
 	border-left: 1px solid rgba(255, 255, 255, .1);
+	backdrop-filter: blur(5px);
+	z-index: 100;
 }
 
 .upgrademenu > div:first-child {
@@ -216,21 +224,51 @@ strong {
 	z-index: 101;
 }
 
+.particles {
+	position: absolute;
+	z-index: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.orbit {
+	position: absolute;
+	animation-name: orbit;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	border: 1px solid rgba(0, 0, 0, .1);
+	border-radius: 50%;
+	z-index: 1;
+}
+
+.moon {
+	position: absolute;
+	top: calc(-20px / 2);
+	/*left: 0;*/
+	left: calc(50% - (20px / 2));
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	z-index: 1;
+}
+
 .test {
 	position: absolute;
 	top: 0;
 	left: var(--menu-width);
 	margin: calc(var(--button-height) / 4);
 	height: calc(var(--button-height) / 2);
-	width: calc(var(--menu-width) * 1.2);
+	width: calc(var(--menu-width) * 1.5);
 	font-size: calc(var(--button-height) / 2);
 	border: 0;
 	background: rgba(0, 0, 0, .1);
 	color: var(--text-color);
-}
-
-.test::before {
-	content: '1 + ';
+	z-index: 10;
 }
 
 
