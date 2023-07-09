@@ -15,6 +15,6 @@ function check() {
 
 setInterval(check, 500)
 
-setInterval(() => cookie.click(), 10)
+// setInterval(() => cookie.click(), 10)
 
 
